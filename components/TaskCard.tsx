@@ -18,27 +18,30 @@ const TaskCard = (props: TaskCardProps) => {
         console.log('TOGGLE!');
         toggleTimer(!timerOn);
         if (!timerOn) {
-            setSeconds(0);
+            setSeconds(taskDuration.current);
         }
     }
 
     const _startTask = (taskId: number) => {
-        if (!timerOn) {
-            // _setActiveTask(taskId);
-            _toggleTimer();
-        }
+        // if (timerOn) {
+        //     setSeconds(taskDuration.current);
+        // }
+        _toggleTimer();
     }
 
     const _buildTaskDurationString = (duration: number) => {
-
         let mins = Math.floor(duration / 60)
-        let secs = duration - mins;
+        let secs = duration - (mins * 60);
         return mins + ':' + (secs < 10 ? '0' + secs : secs);
     }
 
     useEffect(() => {
+        if (seconds == 0 && timerOn) {
+            alert("Task complete!");
+            _toggleTimer();
+        }
         const interval = setInterval(() => {
-            setSeconds(prevSeconds => prevSeconds + 1);
+            setSeconds(prevSeconds => prevSeconds - 1);
         }, 1000); // Update every second
 
         // Cleanup the interval when the component unmounts or seconds reach 0
@@ -55,7 +58,7 @@ const TaskCard = (props: TaskCardProps) => {
         <View style={styles.card}>
             <Text>Task 1</Text>
             <Text>{_buildTaskDurationString(timerOn ? seconds : taskDuration.current)}</Text>
-            <Button onPress={() => _startTask(taskId.current)} title='Start' />
+            <Button onPress={() => _startTask(taskId.current)} title={timerOn ? 'Stop' : 'Start'} />
         </View>
     );
 };
